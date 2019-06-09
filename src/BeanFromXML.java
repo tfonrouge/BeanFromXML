@@ -83,7 +83,9 @@ public class BeanFromXML {
                         if (types != null && types.length == 1) {
                             Class<?> classItem = (Class<?>) parameterizedType.getActualTypeArguments()[0];
                             BXMLElementName clsAnnotation = (classItem.getAnnotation(BXMLElementName.class));
-                            if (clsAnnotation != null) {
+                            if (clsAnnotation == null) {
+                                bxmlBaseFields.add(new BXMLListField(field, classItem.getSimpleName(), classItem));
+                            } else {
                                 bxmlBaseFields.add(new BXMLListField(field, clsAnnotation.value(), classItem));
                             }
                         }
@@ -111,7 +113,6 @@ public class BeanFromXML {
                             if (bxmlBaseField.elementName.equalsIgnoreCase(elementName)) {
                                 try {
                                     Object item = bxmlBaseField.getNewInstance();
-                                    getAttributes(item, event);
                                     getBean(item, eventReader, event);
                                     if (bxmlBaseField instanceof BXMLListField) {
                                         ((BXMLListField) bxmlBaseField).objects.add(item);
